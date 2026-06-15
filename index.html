@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EngHamed Tools</title>
-    <!-- استدعاء مكتبة توليد الـ QR Code من خلال رابط خارجي موثوق -->
-    <script src="https://cloudflare.com"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -40,11 +38,7 @@
             border-bottom: 2px solid #ecf0f1;
             padding-bottom: 10px;
         }
-        .coming-soon {
-            color: #7f8c8d;
-            font-style: italic;
-        }
-        input, button {
+        input, select, button {
             padding: 10px;
             margin: 10px 0;
             font-size: 16px;
@@ -66,15 +60,39 @@
         }
         .result {
             margin-top: 15px;
-            padding: 10px;
+            padding: 15px;
             background-color: #e8f8f5;
             border-left: 5px solid #27ae60;
             border-radius: 3px;
+            line-height: 1.6;
         }
-        #qrcode {
+        #qrcode-container {
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+        #qrcode-img {
+            border: 4px solid #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 180px;
+        }
+        .row {
             display: flex;
-            justify-content: center;
+            gap: 10px;
+        }
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 15px;
+        }
+        .invoice-table th, .invoice-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        .invoice-table th {
+            background-color: #2c3e50;
+            color: white;
         }
     </style>
 </head>
@@ -86,7 +104,7 @@
         <p>Free Online Tools by Eng. Hamed Bajhaow</p>
     </header>
 
-    <!-- أداة حساب العمر الدقيق -->
+    <!-- 1. حاسبة العمر الدقيق -->
     <div class="tool-card">
         <h3>📅 حاسبة العمر الدقيق</h3>
         <label for="birthdate">اختر تاريخ ميلادك:</label>
@@ -95,84 +113,138 @@
         <div id="ageResult" class="result" style="display:none;"></div>
     </div>
 
-    <!-- أداة مولد الكيو آر كود -->
+    <!-- 2. مولد الكيو آر كود -->
     <div class="tool-card">
         <h3>🔗 مولد رمز الاستجابة السريعة (QR Code)</h3>
         <label for="qrText">أدخل الرابط أو النص المراد تحويله:</label>
         <input type="text" id="qrText" placeholder="https://example.com">
         <button onclick="generateQR()">توليد QR Code</button>
-        <div id="qrcode"></div>
+        <div id="qrcode-container">
+            <p style="text-align:center; color:#7f8c8d; font-size:14px;">اضغط مطولاً على الرمز لحفظ الصورة</p>
+            <img id="qrcode-img" src="" alt="QR Code">
+        </div>
     </div>
 
-    <!-- الأدوات المتبقية كمشروع قادم -->
+    <!-- 3. حاسبة ضريبة القيمة المضافة -->
     <div class="tool-card">
         <h3>💰 حاسبة ضريبة القيمة المضافة (VAT Calculator)</h3>
-        <p class="coming-soon">قريباً...</p>
+        <label for="amount">المبلغ المالي:</label>
+        <input type="number" id="amount" placeholder="أدخل المبلغ">
+        <label for="vatRate">نسبة الضريبة (%):</label>
+        <input type="number" id="vatRate" value="15">
+        <button onclick="calculateVAT()">احسب الضريبة</button>
+        <div id="vatResult" class="result" style="display:none;"></div>
     </div>
 
+    <!-- 4. مولد الفواتير -->
     <div class="tool-card">
-        <h3>📄 مولد الفواتير (Invoice Generator)</h3>
-        <p class="coming-soon">قريباً...</p>
+        <h3>📄 مولد الفواتير المبسط (Invoice Generator)</h3>
+        <div class="row">
+            <input type="text" id="itemName" placeholder="اسم الخدمة / المنتج">
+            <input type="number" id="itemPrice" placeholder="السعر">
+        </div>
+        <button onclick="addToInvoice()">إضافة إلى الفاتورة</button>
+        <div id="invoiceSection" style="display:none; margin-top:15px;">
+            <table class="invoice-table">
+                <thead>
+                    <tr>
+                        <th>البيان</th>
+                        <th>السعر</th>
+                    </tr>
+                </thead>
+                <tbody id="invoiceBody"></tbody>
+            </table>
+            <div id="invoiceTotal" class="result"></div>
+        </div>
     </div>
 
+    <!-- 5. حاسبة الرواتب -->
     <div class="tool-card">
         <h3>💵 حاسبة الرواتب (Salary Calculator)</h3>
-        <p class="coming-soon">قريباً...</p>
+        <label for="basicSalary">الراتب الأساسي:</label>
+        <input type="number" id="basicSalary" placeholder="مثال: 5000">
+        <label for="allowances">إجمالي البدلات (سكن، نقل، إلخ):</label>
+        <input type="number" id="allowances" placeholder="مثال: 1500" value="0">
+        <label for="deductions">إجمالي الخصومات (تأمينات، غياب، إلخ):</label>
+        <input type="number" id="deductions" placeholder="مثال: 500" value="0">
+        <button onclick="calculateSalary()">احسب صافي الراتب</button>
+        <div id="salaryResult" class="result" style="display:none;"></div>
     </div>
 </div>
 
 <script>
-    // برمجة حاسبة العمر
+    // 1. برمجة حاسبة العمر
     function calculateAge() {
         const birthDateInput = document.getElementById('birthdate').value;
-        if (!birthDateInput) {
-            alert('الرجاء اختيار تاريخ الميلاد أولاً');
-            return;
-        }
-
+        if (!birthDateInput) { alert('الرجاء اختيار تاريخ الميلاد أولاً'); return; }
         const birthDate = new Date(birthDateInput);
         const today = new Date();
-
         let years = today.getFullYear() - birthDate.getFullYear();
         let months = today.getMonth() - birthDate.getMonth();
         let days = today.getDate() - birthDate.getDate();
-
-        if (days < 0) {
-            months--;
-            const previousMonth = new Date(today.getFullYear(), today.getMonth(), 0);
-            days += previousMonth.getDate();
-        }
-
-        if (months < 0) {
-            years--;
-            months += 12;
-        }
-
+        if (days < 0) { months--; const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0); days += prevMonth.getDate(); }
+        if (months < 0) { years--; months += 12; }
         const resultDiv = document.getElementById('ageResult');
         resultDiv.style.display = 'block';
         resultDiv.innerHTML = `عمرك الدقيق هو: <strong>${years}</strong> سنة، و <strong>${months}</strong> شهر، و <strong>${days}</strong> يوم.`;
     }
 
-    // برمجة مولد الـ QR Code
-    let qrcodeInstance = null;
+    // 2. برمجة مولد الـ QR Code
     function generateQR() {
         const qrTextInput = document.getElementById('qrText').value;
-        if (!qrTextInput) {
-            alert('الرجاء إدخال نص أو رابط أولاً');
-            return;
-        }
+        if (!qrTextInput) { alert('الرجاء إدخال نص أو رابط أولاً'); return; }
+        const encodedText = encodeURIComponent(qrTextInput);
+        document.getElementById('qrcode-img').src = `https://googleapis.com{encodedText}`;
+        document.getElementById('qrcode-container').style.display = 'block';
+    }
 
-        const qrContainer = document.getElementById('qrcode');
-        qrContainer.innerHTML = ""; // مسح الكود القديم إن وجد
+    // 3. برمجة حاسبة ضريبة القيمة المضافة
+    function calculateVAT() {
+        const amount = parseFloat(document.getElementById('amount').value);
+        const vatRate = parseFloat(document.getElementById('vatRate').value);
+        if (isNaN(amount) || isNaN(vatRate)) { alert('الرجاء إدخال قيم صحيحة'); return; }
+        const vatAmount = (amount * vatRate) / 100;
+        const total = amount + vatAmount;
+        const resultDiv = document.getElementById('vatResult');
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = `المبلغ الأساسي: <b>${amount.toFixed(2)}</b><br>قيمة الضريبة (${vatRate}%): <b>${vatAmount.toFixed(2)}</b><br>الإجمالي شاملاً الضريبة: <b>${total.toFixed(2)}</b>`;
+    }
 
-        qrcodeInstance = new QRCode(qrContainer, {
-            text: qrTextInput,
-            width: 128,
-            height: 128,
-            colorDark : "#2c3e50",
-            colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.H
+    // 4. برمجة مولد الفواتير
+    let invoiceItems = [];
+    function addToInvoice() {
+        const name = document.getElementById('itemName').value;
+        const price = parseFloat(document.getElementById('itemPrice').value);
+        if (!name || isNaN(price)) { alert('الرجاء إدخال اسم المادة وسعرها'); return; }
+        invoiceItems.push({ name, price });
+        
+        document.getElementById('itemName').value = '';
+        document.getElementById('itemPrice').value = '';
+        
+        updateInvoiceTable();
+    }
+    function updateInvoiceTable() {
+        const body = document.getElementById('invoiceBody');
+        body.innerHTML = '';
+        let total = 0;
+        invoiceItems.forEach(item => {
+            total += item.price;
+            body.innerHTML += `<tr><td>${item.name}</td><td>${item.price.toFixed(2)}</td></tr>`;
         });
+        document.getElementById('invoiceSection').style.display = 'block';
+        document.getElementById('invoiceTotal').innerHTML = `إجمالي الفاتورة: <strong>${total.toFixed(2)}</strong>`;
+    }
+
+    // 5. برمجة حاسبة الرواتب
+    function calculateSalary() {
+        const basic = parseFloat(document.getElementById('basicSalary').value) || 0;
+        const allowances = parseFloat(document.getElementById('allowances').value) || 0;
+        const deductions = parseFloat(document.getElementById('deductions').value) || 0;
+        if (basic <= 0) { alert('الرجاء إدخال راتب أساسي صحيح'); return; }
+        const netSalary = (basic + allowances) - deductions;
+        const resultDiv = document.getElementById('salaryResult');
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = `إجمالي الاستحقاقات (الأساسي + البدلات): <b>${(basic + allowances).toFixed(2)}</b><br>إجمالي الاستقطاعات: <b>${deductions.toFixed(2)}</b><br>صافي الراتب المستحق الصرف: <strong>${netSalary.toFixed(2)}</strong>`;
     }
 </script>
 
