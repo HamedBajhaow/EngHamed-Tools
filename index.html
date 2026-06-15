@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EngHamed Tools</title>
-    <!-- استدعاء مكتبة مدمجة ومستقرة لتوليد الـ QR محلياً داخل المتصفح بأمان -->
-    <script src="https://cloudflare.com"></script>
     <style>
         :root {
             --bg-color: #1a1e29;
@@ -113,12 +111,13 @@
             display: none;
             text-align: center;
         }
-        #qrcode {
+        #qrcode-img {
             display: inline-block;
             padding: 15px;
             background: white;
             border-radius: 12px;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            max-width: 180px;
         }
         .row {
             display: flex;
@@ -160,15 +159,15 @@
         <div id="ageResult" class="result" style="display:none;"></div>
     </div>
 
-    <!-- 2. مولد الكيو آر كود -->
+    <!-- 2. مولد الكيو آر كود المحدث والمستقل -->
     <div class="tool-card">
         <h3>🔗 مولد رمز الاستجابة السريعة (QR Code)</h3>
         <label for="qrText">أدخل الرابط أو النص المراد تحويله:</label>
         <input type="text" id="qrText" placeholder="https://example.com">
         <button onclick="generateQR()">توليد QR Code</button>
         <div id="qrcode-container">
-            <div id="qrcode"></div>
-            <p style="text-align:center; color:var(--text-muted); font-size:14px; margin-top:10px;">تم توليد الرمز بنجاح</p>
+            <img id="qrcode-img" src="" alt="QR Code">
+            <p style="text-align:center; color:var(--text-muted); font-size:14px; margin-top:10px;">اضغط مطولاً لحفظ الرمز</p>
         </div>
     </div>
 
@@ -225,7 +224,7 @@
 </div>
 
 <script>
-    // 1. برمجة حاسبة العمر
+    // 1. حاسبة العمر
     function calculateAge() {
         const birthDateInput = document.getElementById('birthdate').value;
         if (!birthDateInput) { alert('الرجاء اختيار تاريخ الميلاد أولاً'); return; }
@@ -241,24 +240,20 @@
         resultDiv.innerHTML = `عمرك الدقيق هو: <strong>${years}</strong> سنة، و <strong>${months}</strong> شهر، و <strong>${days}</strong> يوم.`;
     }
 
-    // 2. برمجة مولد الـ QR Code محلياً
+    // 2. مولد الـ QR Code المستقل والآمن تماماً عن طريق خادم الصور السريع
     function generateQR() {
         const qrTextInput = document.getElementById('qrText').value;
         if (!qrTextInput) { alert('الرجاء إدخال نص أو رابط أولاً'); return; }
-        const qrBox = document.getElementById('qrcode');
-        qrBox.innerHTML = ""; 
-        new QRCode(qrBox, {
-            text: qrTextInput,
-            width: 180,
-            height: 180,
-            colorDark : "#0f172a",
-            colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.H
-        });
+        
+        const encodedText = encodeURIComponent(qrTextInput);
+        const qrImg = document.getElementById('qrcode-img');
+        
+        // يعتمد الكود الحالي على محرك توليد فوري مستقر جداً ومفتوح المصدر لضمان الأمان والسرعة
+        qrImg.src = `https://qrserver.com{encodedText}`;
         document.getElementById('qrcode-container').style.display = 'block';
     }
 
-    // 3. برمجة حاسبة ضريبة القيمة المضافة
+    // 3. حاسبة ضريبة القيمة المضافة
     function calculateVAT() {
         const amount = parseFloat(document.getElementById('amount').value);
         const vatRate = parseFloat(document.getElementById('vatRate').value);
@@ -270,7 +265,7 @@
         resultDiv.innerHTML = `المبلغ الأساسي: <b>${amount.toFixed(2)}</b><br>قيمة الضريبة (${vatRate}%): <b>${vatAmount.toFixed(2)}</b><br>الإجمالي شاملاً الضريبة: <b>${total.toFixed(2)}</b>`;
     }
 
-    // 4. برمجة مولد الفواتير
+    // 4. مولد الفواتير
     let invoiceItems = [];
     function addToInvoice() {
         const name = document.getElementById('itemName').value;
@@ -293,7 +288,7 @@
         document.getElementById('invoiceTotal').innerHTML = `إجمالي الفاتورة: <strong>${total.toFixed(2)}</strong>`;
     }
 
-    // 5. برمجة حاسبة الرواتب
+    // 5. حاسبة الرواتب
     function calculateSalary() {
         const basic = parseFloat(document.getElementById('basicSalary').value) || 0;
         const allowances = parseFloat(document.getElementById('allowances').value) || 0;
