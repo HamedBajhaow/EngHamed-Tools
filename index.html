@@ -1,73 +1,180 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EngHamed Tools</title>
-
-<style>
-body{
-font-family:Arial,sans-serif;
-background:#f5f5f5;
-text-align:center;
-padding:40px;
-}
-
-.container{
-max-width:800px;
-margin:auto;
-background:white;
-padding:30px;
-border-radius:15px;
-box-shadow:0 0 15px rgba(0,0,0,.1);
-}
-
-h1{
-color:#0073aa;
-}
-
-.tool{
-margin:15px;
-padding:15px;
-background:#f0f7ff;
-border-radius:10px;
-}
-
-a{
-color:#0073aa;
-text-decoration:none;
-font-weight:bold;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EngHamed Tools</title>
+    <!-- استدعاء مكتبة توليد الـ QR Code من خلال رابط خارجي موثوق -->
+    <script src="https://cloudflare.com"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            color: #333;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        .tool-card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: right;
+        }
+        .tool-card h3 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+        .coming-soon {
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #219653;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #e8f8f5;
+            border-left: 5px solid #27ae60;
+            border-radius: 3px;
+        }
+        #qrcode {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+        }
+    </style>
 </head>
-
 <body>
 
 <div class="container">
+    <header>
+        <h1>EngHamed Tools</h1>
+        <p>Free Online Tools by Eng. Hamed Bajhaow</p>
+    </header>
 
-<h1>EngHamed Tools</h1>
+    <!-- أداة حساب العمر الدقيق -->
+    <div class="tool-card">
+        <h3>📅 حاسبة العمر الدقيق</h3>
+        <label for="birthdate">اختر تاريخ ميلادك:</label>
+        <input type="date" id="birthdate">
+        <button onclick="calculateAge()">احسب العمر الآن</button>
+        <div id="ageResult" class="result" style="display:none;"></div>
+    </div>
 
-<p>Free Online Tools by Eng. Hamed Bajhaow</p>
+    <!-- أداة مولد الكيو آر كود -->
+    <div class="tool-card">
+        <h3>🔗 مولد رمز الاستجابة السريعة (QR Code)</h3>
+        <label for="qrText">أدخل الرابط أو النص المراد تحويله:</label>
+        <input type="text" id="qrText" placeholder="https://example.com">
+        <button onclick="generateQR()">توليد QR Code</button>
+        <div id="qrcode"></div>
+    </div>
 
-<div class="tool">
-VAT Calculator (Coming Soon)
+    <!-- الأدوات المتبقية كمشروع قادم -->
+    <div class="tool-card">
+        <h3>💰 حاسبة ضريبة القيمة المضافة (VAT Calculator)</h3>
+        <p class="coming-soon">قريباً...</p>
+    </div>
+
+    <div class="tool-card">
+        <h3>📄 مولد الفواتير (Invoice Generator)</h3>
+        <p class="coming-soon">قريباً...</p>
+    </div>
+
+    <div class="tool-card">
+        <h3>💵 حاسبة الرواتب (Salary Calculator)</h3>
+        <p class="coming-soon">قريباً...</p>
+    </div>
 </div>
 
-<div class="tool">
-Invoice Generator (Coming Soon)
-</div>
+<script>
+    // برمجة حاسبة العمر
+    function calculateAge() {
+        const birthDateInput = document.getElementById('birthdate').value;
+        if (!birthDateInput) {
+            alert('الرجاء اختيار تاريخ الميلاد أولاً');
+            return;
+        }
 
-<div class="tool">
-Salary Calculator (Coming Soon)
-</div>
+        const birthDate = new Date(birthDateInput);
+        const today = new Date();
 
-<br>
+        let years = today.getFullYear() - birthDate.getFullYear();
+        let months = today.getMonth() - birthDate.getMonth();
+        let days = today.getDate() - birthDate.getDate();
 
-<a href="https://enghamed.com">
-Visit EngHamed.com
-</a>
+        if (days < 0) {
+            months--;
+            const previousMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+            days += previousMonth.getDate();
+        }
 
-</div>
+        if (months < 0) {
+            years--;
+            months += 12;
+        }
+
+        const resultDiv = document.getElementById('ageResult');
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = `عمرك الدقيق هو: <strong>${years}</strong> سنة، و <strong>${months}</strong> شهر، و <strong>${days}</strong> يوم.`;
+    }
+
+    // برمجة مولد الـ QR Code
+    let qrcodeInstance = null;
+    function generateQR() {
+        const qrTextInput = document.getElementById('qrText').value;
+        if (!qrTextInput) {
+            alert('الرجاء إدخال نص أو رابط أولاً');
+            return;
+        }
+
+        const qrContainer = document.getElementById('qrcode');
+        qrContainer.innerHTML = ""; // مسح الكود القديم إن وجد
+
+        qrcodeInstance = new QRCode(qrContainer, {
+            text: qrTextInput,
+            width: 128,
+            height: 128,
+            colorDark : "#2c3e50",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+    }
+</script>
 
 </body>
 </html>
