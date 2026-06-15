@@ -194,7 +194,7 @@
         const qrTextInput = document.getElementById('qrText').value;
         if (!qrTextInput) { alert('الرجاء إدخال نص أو رابط أولاً'); return; }
         const encodedText = encodeURIComponent(qrTextInput);
-        document.getElementById('qrcode-img').src = `https://googleapis.com{encodedText}`;
+        document.getElementById('qrcode-img').src = `https://qrserver.com{encodedText}`;
         document.getElementById('qrcode-container').style.display = 'block';
     }
 
@@ -217,10 +217,8 @@
         const price = parseFloat(document.getElementById('itemPrice').value);
         if (!name || isNaN(price)) { alert('الرجاء إدخال اسم المادة وسعرها'); return; }
         invoiceItems.push({ name, price });
-        
         document.getElementById('itemName').value = '';
         document.getElementById('itemPrice').value = '';
-        
         updateInvoiceTable();
     }
     function updateInvoiceTable() {
