@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EngHamed Tools Pro</title>
+<meta name="description" content="مجموعة أدوات مجانية احترافية">
+<style>
+body{font-family:Tahoma,Arial;background:#0f172a;color:#fff;margin:0}
+header{text-align:center;padding:30px;background:#111827}
+.container{max-width:1200px;margin:auto;padding:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.card{background:#1e293b;padding:18px;border-radius:12px}
+h1,h3{margin-top:0}
+input,button,select{width:100%;padding:10px;margin:6px 0;border-radius:8px;border:1px solid #334155}
+button{cursor:pointer;background:#38bdf8}
+.result{margin-top:10px;padding:10px;background:#334155;border-radius:8px}
+footer{text-align:center;padding:20px}
+table{width:100%;border-collapse:collapse} td,th{border:1px solid #475569;padding:6px}
+</style>
+</head>
+<body>
+<header><h1>EngHamed Tools Pro</h1><p>أدوات مجانية احترافية</p></header>
+<div class="container"><div class="grid">
+
+<div class="card"><h3>حاسبة العمر</h3><input type="date" id="birth"><button onclick="ageCalc()">احسب</button><div id="age" class="result"></div></div>
+
+<div class="card"><h3>حاسبة الضريبة</h3><input type="number" id="amt" placeholder="المبلغ"><button onclick="vatCalc()">احسب</button><div id="vat" class="result"></div></div>
+
+<div class="card"><h3>حاسبة الراتب</h3><input id="sal" type="number" placeholder="الراتب"><input id="allow" type="number" placeholder="البدلات"><input id="ded" type="number" placeholder="الخصومات"><button onclick="salaryCalc()">احسب</button><div id="salaryR" class="result"></div></div>
+
+<div class="card"><h3>BMI</h3><input id="w" type="number" placeholder="الوزن"><input id="h" type="number" step="0.01" placeholder="الطول بالمتر"><button onclick="bmiCalc()">احسب</button><div id="bmi" class="result"></div></div>
+
+<div class="card"><h3>حساب النسبة المئوية</h3><input id="n1" type="number"><input id="n2" type="number" placeholder="%"><button onclick="percentCalc()">احسب</button><div id="per" class="result"></div></div>
+
+<div class="card"><h3>مولد كلمات مرور</h3><button onclick="genPass()">توليد</button><div id="pass" class="result"></div></div>
+
+<div class="card"><h3>حاسبة القرض</h3><input id="loan" type="number" placeholder="مبلغ القرض"><input id="rate" type="number" placeholder="الفائدة السنوية %"><input id="years" type="number" placeholder="عدد السنوات"><button onclick="loanCalc()">احسب</button><div id="loanR" class="result"></div></div>
+
+<div class="card"><h3>حاسبة الزكاة</h3><input id="zakat" type="number" placeholder="المبلغ"><button onclick="zakatCalc()">احسب</button><div id="zakatR" class="result"></div></div>
+
+<div class="card"><h3>مولد فاتورة مبسط</h3>
+<input id="item" placeholder="الخدمة">
+<input id="price" type="number" placeholder="السعر">
+<button onclick="addItem()">إضافة</button>
+<table><thead><tr><th>الخدمة</th><th>السعر</th></tr></thead><tbody id="inv"></tbody></table>
+<div id="total" class="result"></div>
+</div>
+
+<div class="card"><h3>QR Code</h3>
+<p>استخدم خدمة QR مجانية:</p>
+<input id="qrtext" placeholder="النص أو الرابط">
+<button onclick="qr()">إنشاء</button>
+<div id="qrout"></div>
+</div>
+
+</div></div>
+
+<footer>© EngHamed.com</footer>
+
+<script>
+function ageCalc(){let b=new Date(birth.value);let t=new Date();age.innerHTML=(t.getFullYear()-b.getFullYear())+" سنة";}
+function vatCalc(){let a=+amt.value||0;vat.innerHTML="الضريبة: "+(a*0.15).toFixed(2)+"<br>الإجمالي: "+(a*1.15).toFixed(2);}
+function salaryCalc(){salaryR.innerHTML=(+sal.value||0)+(+allow.value||0)-(+ded.value||0);}
+function bmiCalc(){bmi.innerHTML=((+w.value)/(+h.value*+h.value)).toFixed(2);}
+function percentCalc(){per.innerHTML=((+n1.value)*(+n2.value)/100).toFixed(2);}
+function genPass(){let c="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#";let p="";for(let i=0;i<16;i++)p+=c[Math.floor(Math.random()*c.length)];pass.innerHTML=p;}
+function loanCalc(){let P=+loan.value,r=(+rate.value/100)/12,n=(+years.value*12);if(!P||!n){loanR.innerHTML="أدخل البيانات";return;}let m=(P*r)/(1-Math.pow(1+r,-n));loanR.innerHTML="القسط الشهري: "+m.toFixed(2);}
+function zakatCalc(){zakatR.innerHTML="الزكاة: "+((+zakat.value||0)*0.025).toFixed(2);}
+let items=[];function addItem(){let i=item.value,p=+price.value||0;items.push({i,p});let t=0;inv.innerHTML="";items.forEach(x=>{t+=x.p;inv.innerHTML+=`<tr><td>${x.i}</td><td>${x.p}</td></tr>`});total.innerHTML="الإجمالي: "+t.toFixed(2);}
+function qr(){let txt=encodeURIComponent(qrtext.value);qrout.innerHTML='<img alt="qr" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data='+txt+'">';}
+</script>
+</body></html>
