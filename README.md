@@ -8,6 +8,9 @@ https://enghamed.com
 
 ---
 
+![GitHub followers](https://img.shields.io/github/followers/enghamed)
+
+![Visitors](https://visitor-badge.laobi.icu/badge?page_id=enghamed)
 ## 🛠 الأدوات المتوفرة
 
 ### 📅 حاسبة العمر
